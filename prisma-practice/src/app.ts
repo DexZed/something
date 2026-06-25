@@ -13,6 +13,7 @@ import 'dotenv/config'
 import helmet from "helmet";
 import morgan from "morgan";
 import { env } from "./env";
+import routes, { RouteDefinition } from "./routes";
 
 export const app = {
     APP: express(),
@@ -47,7 +48,7 @@ function initMiddleware(context: Application) {
     );
 }
 
-function initRoutes(context: Application, routes: [{ path: string, route: Router, middleware?: RequestHandler }]) {
+function initRoutes(context: Application, routes: RouteDefinition[]) {
     routes.forEach(({ path, route, middleware }) => {
         middleware?.length ?
             context.use(path, middleware, route) : context.use(path, route)
@@ -65,7 +66,8 @@ function initServer(context: Application, port: number) {
 }
 
 export default function init(context: Application) {
-    initMiddleware(context)
-    // initRoutes(context, [])
-    initServer(context, env.PORT)
+    initMiddleware(context);
+    initRoutes(context, routes);
+    // initErrorHandler(context,errorhandler[]);
+    initServer(context, env.PORT);
 }
