@@ -12,8 +12,8 @@
   "keywords": [],
   "main": "src/server.ts",
   "scripts": {
-    "start": "node --env-file=.env dist/src/index.js",
-    "dev": "tsx watch --env-file=.env src/index.ts",
+    "start": "node dist/src/server.js",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
     "test": "vitest run",
