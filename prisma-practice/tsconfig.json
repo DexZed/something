@@ -4,6 +4,7 @@
     "module": "esnext",
     "strict": true,
     "noImplicitAny": true,
+    "rootDir": "src",
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true,

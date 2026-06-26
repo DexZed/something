@@ -1,3 +1,10 @@
+import {
+	ReasonPhrases,
+	StatusCodes,
+	getReasonPhrase,
+	getStatusCode,
+} from 'http-status-codes';
+
 export class HttpException extends Error {
     public status: number;
 
@@ -15,27 +22,28 @@ export class HttpException extends Error {
 
 export class BadRequestException extends HttpException {
     constructor(
-        message = "Bad Request",
+        message = ReasonPhrases.BAD_REQUEST,
         public details?: any,
     ) {
-        super(400, message);
+        super(StatusCodes.BAD_REQUEST, message);
     }
 }
 
 export class NotFoundException extends HttpException {
-    constructor(message = "Not Found") {
-        super(404, message);
+    constructor(message = ReasonPhrases.NOT_FOUND) {
+        super(StatusCodes.NOT_FOUND, message);
     }
 }
 
 export class UnauthorizedException extends HttpException {
-    constructor(message = "Unauthorized") {
-        super(401, message);
+    constructor(message = ReasonPhrases.UNAUTHORIZED) {
+        super(StatusCodes.UNAUTHORIZED, message);
     }
 }
 
 export class ForbiddenException extends HttpException {
-    constructor(message = "Forbidden") {
-        super(403, message);
+    constructor(message = ReasonPhrases.FORBIDDEN) {
+        super(StatusCodes.FORBIDDEN, message);
     }
 }
+
