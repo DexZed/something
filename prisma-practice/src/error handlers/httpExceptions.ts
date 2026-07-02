@@ -1,8 +1,8 @@
 import {
-	ReasonPhrases,
-	StatusCodes,
-	getReasonPhrase,
-	getStatusCode,
+    ReasonPhrases,
+    StatusCodes,
+    getReasonPhrase,
+    getStatusCode,
 } from 'http-status-codes';
 
 export class HttpException extends Error {
@@ -47,3 +47,14 @@ export class ForbiddenException extends HttpException {
     }
 }
 
+export class PaymentRequired extends HttpException {
+    constructor(message = ReasonPhrases.PAYMENT_REQUIRED) {
+        super(StatusCodes.PAYMENT_REQUIRED, message)
+    }
+}
+
+export class Teapot extends HttpException {
+    constructor(message = ReasonPhrases.IM_A_TEAPOT) {
+        super(StatusCodes.IM_A_TEAPOT, message)
+    }
+}
