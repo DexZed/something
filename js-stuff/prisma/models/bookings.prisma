@@ -1,0 +1,20 @@
+model Booking {
+    id String @id @default(cuid())
+    user_id String
+    technician_id String
+    service_id String
+    status Status @default(PENDING)
+    scheduled_At DateTime
+    total_price Float
+    created_At DateTime @default(now())
+    
+
+    user User @relation(fields: [user_id], references: [id])
+    technician Technician @relation(fields: [technician_id], references: [id])
+    service Service @relation(fields: [service_id], references: [id])
+    payment Payments?
+    review Review?
+
+    @@index([user_id,status])
+}
+

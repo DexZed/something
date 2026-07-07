@@ -1,0 +1,7 @@
+model Category {
+    id String @id @default(cuid())
+    name String @unique
+    description String
+    is_active Boolean @default(true)
+    services Service[]
+}

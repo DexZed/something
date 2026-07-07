@@ -1,0 +1,7 @@
+enum Status {
+    PENDING
+    CONFIRMED
+    IN_PROGRESS
+    COMPLETED
+    CANCELLED
+}

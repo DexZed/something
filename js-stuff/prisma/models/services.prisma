@@ -1,0 +1,13 @@
+model Service{
+    id String @id @default(cuid())
+    name String
+    description String
+    
+    category_id String
+    
+    category Category @relation(fields: [category_id], references: [id])
+
+    technicianServices TechnicianService[]
+
+    bookings Booking[]
+}

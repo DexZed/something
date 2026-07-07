@@ -1,0 +1,9 @@
+model TechnicianService {
+    id String @id @default(cuid())
+    technician_id String
+    service_id String
+    technician Technician @relation(fields: [technician_id], references: [id])
+    service Service @relation(fields: [service_id], references: [id])
+
+    @@index([technician_id, service_id], name: "technician_service_unique")
+}

@@ -1,0 +1,13 @@
+model Payments {
+    id String @id @default(cuid())
+    booking_id String @unique
+    
+    amount Float
+    method String
+    provider String
+    status Status @default(PENDING)
+    paid_at DateTime?
+
+    booking Booking @relation(fields: [booking_id], references: [id])
+    
+}

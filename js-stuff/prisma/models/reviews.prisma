@@ -1,0 +1,15 @@
+model Review {
+    id String @id @default(cuid())
+    user_id String
+    technician_id String
+    booking_id String @unique
+    rating Int 
+    comment String?
+    created_at DateTime @default(now())
+    
+    user User @relation(fields: [user_id], references: [id])
+    technician Technician @relation(fields: [technician_id], references: [id])
+    booking Booking @relation(fields: [booking_id], references: [id])
+
+    @@index([technician_id])
+}
