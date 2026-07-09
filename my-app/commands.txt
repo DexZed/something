@@ -7,3 +7,12 @@ pnpm dlx prisma generate
 pnpm dlx tsx src/lib/seed.ts
 
 npx prisma studio
+
+----Prisma Next commands-----
+pnpm dlx prisma-next db init
+
+pnpm dlx prisma-next migration status
+
+pnpm dlx prisma-next db sign
+
+pnpm dlx prisma-next contract emit

@@ -17,9 +17,11 @@
     "build": "tsc",
     "lint": "eslint --fix src test",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "contract:emit": "prisma-next contract emit"
   },
   "dependencies": {
+    "@prisma-next/postgres": "^0.14.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "chalk": "^5.6.2",
@@ -46,6 +48,7 @@
     "eslint-plugin-format": "^1.0.2",
     "http-status-codes": "^2.3.0",
     "prisma": "^7.8.0",
+    "prisma-next": "^0.14.0",
     "supertest": "^7.1.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",

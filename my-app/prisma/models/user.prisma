@@ -1,13 +1,19 @@
 model User {
-    id            String   @id @default(cuid())
-    name          String
-    email         String   @unique
+    id String @id @default(cuid())
+    name String 
+    email String @unique
     password_hash String
-    role          String   @default("CUSTOMER")
-    created_at    DateTime @default(now())
-    updated_at    DateTime @updatedAt
+    role Role @default(CUSTOMER)
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
 
     technician Technician?
-    bookings   Booking[]
-    reviews    Review[]
+    bookings Booking[]
+    reviews Review[]
+}
+
+enum Role {
+    ADMIN
+    CUSTOMER
+    TECHNICIAN
 }

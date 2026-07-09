@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "preserve",
     "moduleResolution": "bundler",
     "strict": true,
     "noImplicitAny": true,
@@ -11,8 +11,11 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     // "rootDir": "src",
-    "ignoreDeprecations": "6.0",
-    "types": ["node"]
+    // "ignoreDeprecations": "6.0",
+    "types": [
+      "node"
+    ],
+    "resolveJsonModule": true
   },
   // "include": [
   //   "./*.js",

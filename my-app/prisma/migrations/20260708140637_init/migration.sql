@@ -1,30 +1,8 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `createdAt` on the `User` table. All the data in the column will be lost.
-  - You are about to drop the column `updatedAt` on the `User` table. All the data in the column will be lost.
-  - A unique constraint covering the columns `[email]` on the table `User` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `email` to the `User` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `name` to the `User` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `password_hash` to the `User` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
 
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'CUSTOMER', 'TECHNICIAN');
-
--- AlterTable
-ALTER TABLE "User" DROP COLUMN "createdAt",
-DROP COLUMN "updatedAt",
-ADD COLUMN     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "email" TEXT NOT NULL,
-ADD COLUMN     "name" TEXT NOT NULL,
-ADD COLUMN     "password_hash" TEXT NOT NULL,
-ADD COLUMN     "role" "Role" NOT NULL DEFAULT 'CUSTOMER',
-ADD COLUMN     "updated_at" TIMESTAMP(3) NOT NULL;
 
 -- CreateTable
 CREATE TABLE "Booking" (
@@ -104,6 +82,19 @@ CREATE TABLE "TechnicianService" (
     "service_id" TEXT NOT NULL,
 
     CONSTRAINT "TechnicianService_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password_hash" TEXT NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'CUSTOMER',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

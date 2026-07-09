@@ -1,0 +1,133 @@
+// use prisma-next
+// Contract inferred from the live database schema. Edit as needed, then run `prisma-next contract emit`.
+
+types {
+  Checksum = String @db.VarChar(64)
+  CreatedAt = DateTime @db.Timestamp(3)
+  Id = String @db.VarChar(36)
+  MigrationName = String @db.VarChar(255)
+  Uuid = String @db.Uuid
+}
+enum Role {
+  @@type("pg/text@1")
+  Admin = "admin"
+  Customer = "customer"
+  Technician = "technician"
+}
+
+enum Status {
+  @@type("pg/text@1")
+  Pending = "pending"
+  Confirmed = "confirmed"
+  Completed = "completed"
+  Cancelled = "cancelled"
+  InProgress = "in_progress"
+}
+
+
+model Category {
+  id        Uuid     @id @default(uuid())
+  name        String
+  description String
+  is_active    Boolean   @default(true) 
+  services    Service[]
+ @@map("categories")
+}
+
+model Service {
+  id        Uuid     @id @default(uuid())
+  name               String
+  description        String
+  category_id        Uuid              
+  bookings           Booking[]
+  technicianServices TechnicianService[]
+  category           Category            @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+ @@map("services")
+}
+
+model User {
+  id        Uuid     @id @default(uuid())
+  name         String
+  email        String
+  password_hash String       
+  role         Role @default(Customer)  
+  created_at    DateTime @default(now()) 
+  updated_at    DateTime @default(now()) 
+  bookings     Booking[]
+  reviews      Review[]
+  technicians  Technician[]
+ @@map("users")
+}
+
+model Technician {
+  id        Uuid     @id @default(uuid())
+  bio                String
+  is_available        Boolean             @default(true) 
+  ratingAvg          Float               @default(0) 
+  user_id             Uuid               
+  bookings           Booking[]
+  reviews            Review[]
+  technicianServices TechnicianService[]
+  user               User                @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+ @@map("technicians")
+}
+
+model Booking {
+  id        Uuid     @id @default(uuid())
+  user_id       Uuid     
+  technician_id    Uuid     
+  service_id    Uuid   
+  status       Status     @default(Pending)
+  scheduled_At  DateTime  @default(now()) 
+  total_price   Float      
+  created_at    DateTime @default(now()) 
+  updated_at    DateTime @default(now()) 
+  paymentses   Payments[]
+  reviews      Review[]
+  service      Service    @relation(fields: [service_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  technician   Technician @relation(fields: [technician_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user         User       @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([user_id, status])
+ @@map("bookings")
+}
+
+model Payments {
+  id        Uuid     @id @default(uuid())
+  booking_id Uuid     
+  amount    Float
+  method    String
+  provider  String
+  status    Status     @default(Pending)
+  paid_at    DateTime? @default(now()) 
+  booking   Booking    @relation(fields: [booking_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+   @@map("payments")
+}
+
+
+model Review {
+  id        Uuid     @id @default(uuid())
+  user_id       Uuid     
+  technician_id Uuid     
+  booking_id    Uuid     
+  rating       Int
+  comment      String?
+  created_at    DateTime  @default(now()) 
+  booking      Booking    @relation(fields: [booking_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  technician   Technician @relation(fields: [technician_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user         User       @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([technician_id])
+ @@map("reviews")
+}
+
+model TechnicianService {
+  id        Uuid     @id @default(uuid())
+  technician_id Uuid     
+  service_id    Uuid     
+  service      Service    @relation(fields: [service_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  technician   Technician @relation(fields: [technician_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([technician_id, service_id])
+  @@map("technicianServices")
+}

@@ -1,0 +1,119 @@
+// use prisma-next
+// Contract inferred from the live database schema. Edit as needed, then run `prisma-next contract emit`.
+
+types {
+  Checksum = String @db.VarChar(64)
+  CreatedAt = DateTime @db.Timestamp(3)
+  Id = String @db.VarChar(36)
+  MigrationName = String @db.VarChar(255)
+}
+
+model Category {
+  id          String    @id(map: "Category_pkey")
+  name        String
+  description String
+  isActive    Boolean   @default(true) @map("is_active")
+  services    Service[]
+}
+
+model Service {
+  id                 String              @id(map: "Service_pkey")
+  name               String
+  description        String
+  categoryId         String              @map("category_id")
+  bookings           Booking[]
+  technicianServices TechnicianService[]
+  category           Category            @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Service_category_id_fkey")
+}
+
+model User {
+  id           String       @id(map: "User_pkey")
+  name         String
+  email        String
+  passwordHash String       @map("password_hash")
+  role         String       @default("CUSTOMER")
+  createdAt    CreatedAt    @default(now()) @map("created_at")
+  updatedAt    CreatedAt    @map("updated_at")
+  bookings     Booking[]
+  reviews      Review[]
+  technicians  Technician[]
+}
+
+model Technician {
+  id                 String              @id(map: "Technician_pkey")
+  bio                String
+  isAvailable        Boolean             @default(true) @map("is_available")
+  ratingAvg          Float               @default(0) @map("rating_avg")
+  userId             String              @map("user_id")
+  bookings           Booking[]
+  reviews            Review[]
+  technicianServices TechnicianService[]
+  user               User                @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Technician_user_id_fkey")
+}
+
+model Booking {
+  id           String     @id(map: "Booking_pkey")
+  userId       String     @map("user_id")
+  technicianId String     @map("technician_id")
+  serviceId    String     @map("service_id")
+  status       String     @default("PENDING")
+  scheduledAt  CreatedAt  @map("scheduled_At")
+  totalPrice   Float      @map("total_price")
+  createdAt    CreatedAt  @default(now()) @map("created_At")
+  paymentses   Payments[]
+  reviews      Review[]
+  service      Service    @relation(fields: [serviceId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Booking_service_id_fkey")
+  technician   Technician @relation(fields: [technicianId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Booking_technician_id_fkey")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Booking_user_id_fkey")
+
+  @@index([userId, status], map: "Booking_user_id_status_idx")
+}
+
+model Payments {
+  id        String     @id(map: "Payments_pkey")
+  bookingId String     @map("booking_id")
+  amount    Float
+  method    String
+  provider  String
+  status    String     @default("PENDING")
+  paidAt    CreatedAt? @map("paid_at")
+  booking   Booking    @relation(fields: [bookingId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Payments_booking_id_fkey")
+}
+
+model PrismaMigrations {
+  id                Id            @id(map: "_prisma_migrations_pkey")
+  checksum          Checksum
+  finishedAt        DateTime?     @map("finished_at")
+  migrationName     MigrationName @map("migration_name")
+  logs              String?
+  rolledBackAt      DateTime?     @map("rolled_back_at")
+  startedAt         DateTime      @default(now()) @map("started_at")
+  appliedStepsCount Int           @default(0) @map("applied_steps_count")
+
+  @@map("_prisma_migrations")
+}
+
+model Review {
+  id           String     @id(map: "Review_pkey")
+  userId       String     @map("user_id")
+  technicianId String     @map("technician_id")
+  bookingId    String     @map("booking_id")
+  rating       Int
+  comment      String?
+  createdAt    CreatedAt  @default(now()) @map("created_at")
+  booking      Booking    @relation(fields: [bookingId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Review_booking_id_fkey")
+  technician   Technician @relation(fields: [technicianId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Review_technician_id_fkey")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Review_user_id_fkey")
+
+  @@index([technicianId], map: "Review_technician_id_idx")
+}
+
+model TechnicianService {
+  id           String     @id(map: "TechnicianService_pkey")
+  technicianId String     @map("technician_id")
+  serviceId    String     @map("service_id")
+  service      Service    @relation(fields: [serviceId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "TechnicianService_service_id_fkey")
+  technician   Technician @relation(fields: [technicianId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "TechnicianService_technician_id_fkey")
+
+  @@index([technicianId, serviceId], map: "technician_service_unique")
+}
