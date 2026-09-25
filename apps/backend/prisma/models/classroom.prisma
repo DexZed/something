@@ -1,0 +1,112 @@
+enum ClassStatus {
+    active
+    inactive
+    archived
+
+    @@map("class_status")
+}
+
+enum PaymentStatus {
+    pending
+    succeeded
+    failed
+    refunded
+
+    @@map("payment_status")
+}
+
+model Department {
+    id          Int       @id @default(autoincrement())
+    code        String    @unique @db.VarChar(50)
+    name        String    @db.VarChar(255)
+    description String?   @db.Text
+    createdAt   DateTime  @default(now()) @map("created_at")
+    updatedAt   DateTime  @updatedAt @map("updated_at")
+    subjects    Subject[]
+
+    @@map("departments")
+}
+
+model Subject {
+    id           Int        @id @default(autoincrement())
+    departmentId Int        @map("department_id")
+    name         String     @db.VarChar(255)
+    code         String     @unique @db.VarChar(50)
+    description  String?    @db.Text
+    createdAt    DateTime   @default(now()) @map("created_at")
+    updatedAt    DateTime   @updatedAt @map("updated_at")
+    department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+    classes      Class[]
+
+    @@map("subjects")
+}
+
+model Class {
+    id             Int         @id @default(autoincrement())
+    subjectId      Int         @map("subject_id")
+    teacherId      String      @map("teacher_id")
+    inviteCode     String      @unique @map("invite_code") @db.VarChar(50)
+    name           String      @db.VarChar(255)
+    price          Decimal     @default(0.00) @db.Decimal(10, 2) // One-time course price
+    currency       String      @default("usd") @db.VarChar(3)
+    bannerCldPubId String?     @map("banner_cld_pub_id") @db.Text
+    bannerUrl      String?     @map("banner_url") @db.Text
+    capacity       Int         @default(50)
+    description    String?     @db.Text
+    status         ClassStatus @default(active)
+    schedules      Json
+    createdAt      DateTime    @default(now()) @map("created_at")
+    updatedAt      DateTime    @updatedAt @map("updated_at")
+
+    subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+    teacher     User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+    enrollments Enrollment[]
+    payments    Payment[] // Transaction history for this class
+
+    @@index([subjectId], map: "classes_subject_id_idx")
+    @@index([teacherId], map: "classes_teacher_id_idx")
+    @@map("classes")
+}
+
+model Payment {
+    id       Int           @id @default(autoincrement())
+    userId   String        @map("user_id")
+    classId  Int           @map("class_id")
+    amount   Decimal       @db.Decimal(10, 2)
+    currency String        @default("usd") @db.VarChar(3)
+    status   PaymentStatus @default(pending)
+
+    // Stripe references
+    stripePaymentIntentId   String? @unique @map("stripe_payment_intent_id")
+    stripeCheckoutSessionId String? @unique @map("stripe_checkout_session_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    class      Class       @relation(fields: [classId], references: [id], onDelete: Cascade)
+    enrollment Enrollment? // Optional 1-to-1 link to enrollment created upon payment
+
+    @@index([userId], map: "payments_user_id_idx")
+    @@index([classId], map: "payments_class_id_idx")
+    @@map("payments")
+}
+
+model Enrollment {
+    id        Int    @id @default(autoincrement())
+    studentId String @map("student_id")
+    classId   Int    @map("class_id")
+    paymentId Int?   @unique @map("payment_id") // Optional for free classes/manual additions
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    student User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+    class   Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+    payment Payment? @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+    @@unique([studentId, classId], map: "enrollments_student_class_unique")
+    @@index([studentId], map: "enrollments_student_id_idx")
+    @@index([classId], map: "enrollments_class_id_idx")
+    @@map("enrollments")
+}
