@@ -7,20 +7,23 @@ import {
 
 import { Prisma } from '../generated/prisma/client.js';
 import { prisma } from '../lib/prisma.js';
+import { SubjectRequest } from '../common/schema/request/classroom.request.dto.js';
 
 @Injectable()
 export class SubjectsService {
-  async create(dto: {
-    departmentId: number;
-    name: string;
-
-    code: string;
-    description?: string;
-  }) {
+  async create(dto: SubjectRequest) {
     try {
       const createdSubject = await prisma.subject.create({
         data: dto,
-        select: { id: true },
+        select: {
+          id: true,
+          departmentId: true,
+          name: true,
+          code: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
 
       if (!createdSubject) {
@@ -64,7 +67,16 @@ export class SubjectsService {
         prisma.subject.count({ where }),
         prisma.subject.findMany({
           where,
-          include: { department: true },
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            description: true,
+
+            departmentId: true,
+            createdAt: true,
+          },
+          // include: { department: true },
           orderBy: { createdAt: 'desc' },
           skip,
           take: limitPerPage,
@@ -94,7 +106,7 @@ export class SubjectsService {
     try {
       const subject = await prisma.subject.findUnique({
         where: { id },
-        include: { department: true },
+        // include: { department: true },
       });
 
       if (!subject) {
@@ -140,7 +152,15 @@ export class SubjectsService {
         prisma.class.count({ where: { subjectId } }),
         prisma.class.findMany({
           where: { subjectId },
-          include: { teacher: true },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            status: true,
+            teacherId: true,
+            createdAt: true,
+          },
+          // include: { teacher: true },
           orderBy: { createdAt: 'desc' },
           skip,
           take: limitPerPage,
@@ -212,6 +232,12 @@ export class SubjectsService {
           prisma.user.count({ where }),
           prisma.user.findMany({
             where,
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
             orderBy: { createdAt: 'desc' },
             skip,
             take: limitPerPage,

@@ -13,6 +13,7 @@ import { RoleGuard } from '../common/guard/role.guard.js';
 import { Roles } from '../common/guard/roles.decorator.js';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
+import { CreateDepartmentRequest } from '../common/schema/request/classroom.request.dto.js';
 @Controller('departments')
 @UseGuards(RoleGuard)
 @Roles('teacher')
@@ -34,14 +35,7 @@ export class DepartmentsController {
   @Post()
   // @ZodResponse({ type: CreateDepartmentResponse })
   @ApiResponse({ summary: 'Create a new department' })
-  async create(
-    @Body()
-    body: {
-      code: string;
-      name: string;
-      description?: string;
-    },
-  ) {
+  async create(@Body() body: CreateDepartmentRequest) {
     return this.departmentsService.create(body);
   }
 

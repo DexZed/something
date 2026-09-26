@@ -44,10 +44,19 @@ export class ClassesService {
       prisma.class.count({ where }),
       prisma.class.findMany({
         where,
-        include: {
-          subject: true,
-          teacher: true,
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          status: true,
+          teacherId: true,
+          subjectId: true,
+          createdAt: true,
         },
+        // include: {
+        //   subject: true,
+        //   teacher: true,
+        // },
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
@@ -75,7 +84,23 @@ export class ClassesService {
         inviteCode,
         schedules: (dto.schedules ?? []) as string[], // matches default empty array if JSON/List
       },
-      select: { id: true },
+      select: {
+        id: true,
+        subjectId: true,
+        teacherId: true,
+        inviteCode: true,
+        name: true,
+        price: true,
+        currency: true,
+        bannerCldPubId: true,
+        bannerUrl: true,
+        capacity: true,
+        description: true,
+        status: true,
+        schedules: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!createdClass) {
@@ -93,14 +118,14 @@ export class ClassesService {
 
     const classDetails = await prisma.class.findUnique({
       where: { id },
-      include: {
-        subject: {
-          include: {
-            department: true,
-          },
-        },
-        teacher: true,
-      },
+      // include: {
+      //   subject: {
+      //     include: {
+      //       department: true,
+      //     },
+      //   },
+      //   teacher: true,
+      // },
     });
 
     if (!classDetails) {

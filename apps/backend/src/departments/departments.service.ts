@@ -59,7 +59,14 @@ export class DepartmentsService {
   async create(dto: { code: string; name: string; description?: string }) {
     const createdDepartment = await prisma.department.create({
       data: dto,
-      select: { id: true },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!createdDepartment) {

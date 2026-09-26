@@ -41,6 +41,39 @@ export class StatsService {
   /**
    * Latest activity summaries with relations and limit
    */
+  // "latestClasses": [
+  //           {
+  //               "id": 7,
+  //               "subjectId": 1,
+  //               "teacherId": "xssWRhQSxTdVc1Mew9KVvFaUhBLaavST",
+  //               "inviteCode": "q7xjs96",
+  //               "name": "Programming Advanced - Section D",
+  //               "price": "5000",
+  //               "currency": "BDT",
+  //               "bannerCldPubId": null,
+  //               "bannerUrl": null,
+  //               "capacity": 30,
+  //               "description": "Advance Programming Concepts 5",
+  //               "status": "active",
+  //               "schedules": [
+  //                   {
+  //                       "endTime": "10:30",
+  //                       "roomUrl": "https://meet.google.com/abc-defg-hij",
+  //                       "location": "Room 402",
+  //                       "dayOfWeek": "Monday",
+  //                       "startTime": "09:00"
+  //                   },
+  //                   {
+  //                       "endTime": "10:30",
+  //                       "roomUrl": "https://meet.google.com/abc-defg-hij",
+  //                       "location": "Room 402",
+  //                       "dayOfWeek": "Wednesday",
+  //                       "startTime": "09:00"
+  //                   }
+  //               ],
+  //               "createdAt": "2026-09-23T10:50:20.802Z",
+  //               "updatedAt": "2026-09-23T10:50:20.802Z"
+  //           }
   async getLatest(limit: number = 5) {
     const limitPerPage = Math.max(1, limit);
 
@@ -49,6 +82,14 @@ export class StatsService {
         prisma.class.findMany({
           take: limitPerPage,
           orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            subjectId: true,
+            teacherId: true,
+            description: true,
+            status: true,
+            createdAt: true,
+          },
           // include: {
           //   subject: true,
           //   teacher: true,

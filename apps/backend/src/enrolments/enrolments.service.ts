@@ -6,6 +6,10 @@ import {
 } from '@nestjs/common';
 
 import { prisma } from '../lib/prisma.js';
+import {
+  CreateEnrollmentRequest,
+  JoinEnrollmentRequest,
+} from '../common/schema/request/classroom.request.dto.js';
 
 @Injectable()
 export class EnrolmentsService {
@@ -34,7 +38,7 @@ export class EnrolmentsService {
   /**
    * Create an enrollment directly by classId and studentId
    */
-  async create(dto: any) {
+  async create(dto: CreateEnrollmentRequest) {
     const { classId, studentId } = dto;
 
     const classRecord = await prisma.class.findUnique({
@@ -73,7 +77,7 @@ export class EnrolmentsService {
   /**
    * Join a class using an inviteCode
    */
-  async joinByInviteCode(dto: any) {
+  async joinByInviteCode(dto: JoinEnrollmentRequest) {
     const { inviteCode, studentId } = dto;
 
     const classRecord = await prisma.class.findUnique({

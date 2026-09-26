@@ -14,6 +14,7 @@ import { RoleGuard } from '../common/guard/role.guard.js';
 import { Roles } from '../common/guard/roles.decorator.js';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
+import { SubjectRequest } from '../common/schema/request/classroom.request.dto.js';
 
 @Controller('subjects')
 @UseGuards(RoleGuard)
@@ -40,7 +41,7 @@ export class SubjectsController {
   @ApiResponse({ summary: 'Creates a new subject' })
   async create(
     @Body()
-    body: any,
+    body: SubjectRequest,
   ) {
     return this.subjectsService.create(body);
   }
