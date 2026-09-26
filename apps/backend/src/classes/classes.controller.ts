@@ -21,7 +21,7 @@ import { Roles } from '../common/guard/roles.decorator.js';
 export class ClassesController {
   constructor(private readonly classesService: ClassesService) {}
   @Get()
-  // @ZodResponse({ type: ClassesResponse })
+  // @ZodResponse({ type: All })
   @ApiResponse({ summary: 'Get all classes with filters and pagination' })
   async findAll(
     @Query('search') search?: string,

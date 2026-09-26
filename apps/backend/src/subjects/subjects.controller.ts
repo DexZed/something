@@ -15,6 +15,7 @@ import { Roles } from '../common/guard/roles.decorator.js';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
 import { SubjectRequest } from '../common/schema/request/classroom.request.dto.js';
+import { AllSubjectsResponse } from '../common/schema/response/classroom.response.schema.js';
 
 @Controller('subjects')
 @UseGuards(RoleGuard)
@@ -24,7 +25,7 @@ export class SubjectsController {
   constructor(private readonly subjectsService: SubjectsService) {}
 
   @Get()
-  // @ZodResponse({ type: SubjectsResponse })
+  // @ZodResponse({ type: AllSubjectsResponse })
   @ApiResponse({ summary: 'Lists all subjects' })
   async findAll(
     @Query('search') search?: string,
